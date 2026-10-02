@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Env files (only .env.example is committed)
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+
+# Hardhat
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/coverage/
+contracts/coverage.json
+contracts/ignition/deployments/chain-31337/
+
+# Foundry
+contracts/out/
+contracts/broadcast/*/31337/
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
