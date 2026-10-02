@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  server:
+    name: Server tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        if: hashFiles('server/package.json') != ''
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - if: hashFiles('server/package.json') != ''
+        run: npm ci
+      - if: hashFiles('server/package.json') != ''
+        run: npm test
+
+  client:
+    name: Client tests and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        if: hashFiles('client/package.json') != ''
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - if: hashFiles('client/package.json') != ''
+        run: npm ci
+      - if: hashFiles('client/package.json') != ''
+        run: npm test
+      - if: hashFiles('client/package.json') != ''
+        run: npm run build
+
+  contracts:
+    name: Contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Skip until contracts are set up
+        if: hashFiles('contracts/package.json') == ''
+        run: echo "No contracts/package.json yet, skipping."
+      - uses: actions/setup-node@v7
+        if: hashFiles('contracts/package.json') != ''
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: contracts/package-lock.json
+      - if: hashFiles('contracts/package.json') != ''
+        working-directory: contracts
+        run: npm ci
+      - if: hashFiles('contracts/package.json') != ''
+        working-directory: contracts
+        run: npm test
